@@ -22,12 +22,12 @@ For more details on setting up an application to access OneDrive Consumer or One
 
 In Visual Studio, select the sample OneDriveAPIBrowser from the Startup project list, and then press **F5** or click **Start** to run the sample. The sample looks like this: 
 
-![OneDriveAPIBrowser sample](images/OneDriveAPIBrowser.PNG)
+![OneDriveAPIBrowser sample](OneDriveApiBrowser/images/OneDriveAPIBrowser.PNG)
 
 ### Sign-in to OneDrive Consumer
 When the OneDrive API Browser app opens, choose **File** | **Sign in to MSA** to sign in to a personal OneDrive account. Once you have signed in to your Microsoft account, a dialog will appear, asking for permissions to access OneDrive files.
 
-![Let this app access your info](images/Permissions.PNG)
+![Let this app access your info](OneDriveApiBrowser/images/Permissions.PNG)
 
 Click **Yes**. 
 
