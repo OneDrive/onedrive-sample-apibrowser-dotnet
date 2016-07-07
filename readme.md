@@ -5,8 +5,8 @@ The OneDriveAPIBrowser sample is a [Windows Forms](https://msdn.microsoft.com/en
 ## Set up
 
 1. Install [Visual Studio](https://www.visualstudio.com/downloads/download-visual-studio-vs) and all available updates, if you don't already have it. 
-2. Download the OneDriveAPIBrowser sample from [GitHub](https://github.com/OneDrive/onedrive-sdk-csharp) or create your own fork of the repository.
-3. From Visual Studio, open the **OneDriveSdk.sln** solution.
+2. Download the OneDriveAPIBrowser sample from [GitHub](https://github.com/OneDrive/onedrive-sample-apibrowser-dotnet) or create your own fork of the repository.
+3. From Visual Studio, open the **OneDriveApiBrowser.sln** solution.
 4. Go to the OneDriveApiBrowser project in the solution and view the code for FormBrowser.cs.
 5. Update your OneDrive for Business and/or OneDrive Consumer application details in the following variables at the top of the file:
 ```csharp
@@ -119,7 +119,7 @@ var uploadedItem = await
 
 ## More resources
 
-You can continue to explore this sample and the rest of its features by using GitHub or Visual Studio. The OneDrive SDK for CSharp/.NET is documented [here](https://github.com/OneDrive/onedrive-sdk-csharp/blob/master/README.md). To view a Windows Universal app sample that uses the OneDrive SDK for CSharp/.NET, see [OneDrivePhotoBrowser](https://github.com/OneDrive/onedrive-sdk-csharp/tree/master/samples/OneDrivePhotoBrowser). Make sure to also check out the OneDrive API's official documentation at [dev.onedrive.com](https://dev.onedrive.com). 
+You can continue to explore this sample and the rest of its features by using GitHub or Visual Studio. The OneDrive SDK for CSharp/.NET is documented [here](https://github.com/OneDrive/onedrive-sdk-csharp/blob/master/README.md). To view a Windows Universal app sample that uses the OneDrive SDK for CSharp/.NET, see [OneDrivePhotoBrowser](https://github.com/OneDrive/onedrive-sample-photobrowser-uwp). Make sure to also check out the OneDrive API's official documentation at [dev.onedrive.com](https://dev.onedrive.com). 
 
 ## License
 
