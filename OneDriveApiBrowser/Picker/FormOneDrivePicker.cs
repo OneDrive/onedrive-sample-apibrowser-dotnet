@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using Microsoft.OneDrive.Sdk.Authentication;
+
 namespace OneDriveSamples.Picker
 {
     using Microsoft.OneDrive.Sdk;
-    using Microsoft.OneDrive.Sdk.WindowsForms;
 
     public partial class FormOneDrivePicker : Form
     {
@@ -142,10 +143,10 @@ namespace OneDriveSamples.Picker
             var scopes = multiSelect ? "onedrive_onetime.access:readfile|multi" : "onedrive_onetime.access:readfile|single";
 
             Dictionary<string, string> urlParam = new Dictionary<string,string>();
-            urlParam.Add(Constants.Authentication.ClientIdKeyName, clientId);
-            urlParam.Add(Constants.Authentication.ScopeKeyName, scopes);
-            urlParam.Add(Constants.Authentication.RedirectUriKeyName, msaDesktopUrl);
-            urlParam.Add(Constants.Authentication.ResponseTypeKeyName, "token");
+            urlParam.Add(OAuthConstants.ClientIdKeyName, clientId);
+            urlParam.Add(OAuthConstants.ScopeKeyName, scopes);
+            urlParam.Add(OAuthConstants.RedirectUriKeyName, msaDesktopUrl);
+            urlParam.Add(OAuthConstants.ResponseTypeKeyName, "token");
 
             startUrl = BuildUriWithParameters(msaAuthUrl, urlParam);
             completeUrl = msaDesktopUrl;
@@ -177,7 +178,7 @@ namespace OneDriveSamples.Picker
         {
             Console.WriteLine(resultUri.ToString());
             string[] queryParams = null;
-            int accessTokenIndex = resultUri.AbsoluteUri.IndexOf("#" + Constants.Authentication.AccessTokenKeyName);
+            int accessTokenIndex = resultUri.AbsoluteUri.IndexOf("#" + OAuthConstants.AccessTokenKeyName);
             if (accessTokenIndex > 0)
             {
                 queryParams = resultUri.AbsoluteUri.Substring(accessTokenIndex + 1).Split('&');
@@ -193,24 +194,24 @@ namespace OneDriveSamples.Picker
                 string[] kvp = param.Split('=');
                 switch (kvp[0])
                 {
-                    case Constants.Authentication.AccessTokenKeyName:
+                    case OAuthConstants.AccessTokenKeyName:
                         this.AccessToken = kvp[1];
                         break;
-                    case Constants.Authentication.TokenTypeKeyName:
+                    case OAuthConstants.TokenTypeKeyName:
                         this.TokenType = kvp[1];
                         break;
-                    case Constants.Authentication.ExpiresInKeyName:
+                    case OAuthConstants.ExpiresInKeyName:
                         this.AccessTokenExpiresIn = new TimeSpan(0, 0, int.Parse(kvp[1]));
                         break;
-                    case Constants.Authentication.ScopeKeyName:
+                    case OAuthConstants.ScopeKeyName:
                         var scopeValues = kvp[1].Split(new string[] {":"}, StringSplitOptions.RemoveEmptyEntries);
                         this.SelectionId = scopeValues[2].Replace('_', '.');
                         break;
 
-                    case Constants.Authentication.ErrorKeyName:
+                    case OAuthConstants.ErrorKeyName:
                         this.ErrorCode = kvp[1];
                         break;
-                    case Constants.Authentication.ErrorDescriptionKeyName:
+                    case OAuthConstants.ErrorDescriptionKeyName:
                         this.ErrorDescription = Uri.UnescapeDataString(kvp[1]);
                         break;
                 }
@@ -234,13 +235,10 @@ namespace OneDriveSamples.Picker
 
             if (oneDriveClient == null)
             {
-                oneDriveClient = OneDriveClient.GetMicrosoftAccountClient(
-                    msa_client_id,
-                    "https://login.live.com/oauth20_desktop.srf",
-                    offers,
-                    webAuthenticationUi: new FormsWebAuthenticationUi());
+                var authProvider = new MsaAuthenticationProvider(msa_client_id, "https://login.live.com/oauth20_desktop.srf", offers);
+                oneDriveClient = new OneDriveClient(authProvider);
 
-                await oneDriveClient.AuthenticateAsync();
+                await authProvider.AuthenticateUserAsync();
             }
 
             var parts = this.SelectionId.Split('.');
