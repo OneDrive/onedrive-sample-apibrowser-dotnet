@@ -280,6 +280,8 @@ namespace OneDriveApiBrowser
 
         private async Task SignIn(ClientType clientType)
         {
+            Task authTask;
+
             if (clientType == ClientType.Consumer)
             {
                 var msaAuthProvider = new MsaAuthenticationProvider(
@@ -287,27 +289,7 @@ namespace OneDriveApiBrowser
                     FormBrowser.MsaReturnUrl,
                     FormBrowser.Scopes);
                 this.oneDriveClient = new OneDriveClient("https://api.onedrive.com/v1.0", msaAuthProvider);
-
-                try
-                {
-                    await msaAuthProvider.AuthenticateUserAsync(new HttpProvider());
-                }
-                catch (ServiceException exception)
-                {
-                    if (OAuthConstants.ErrorCodes.AuthenticationFailure == exception.Error.Code)
-                    {
-                        MessageBox.Show(
-                            "Authentication failed",
-                            "Authentication failed",
-                            MessageBoxButtons.OK);
-                        
-                        this.oneDriveClient = null;
-                    }
-                    else
-                    {
-                        PresentServiceException(exception);
-                    }
-                }
+                authTask = msaAuthProvider.AuthenticateUserAsync(new HttpProvider());
             }
             else
             {
@@ -315,26 +297,27 @@ namespace OneDriveApiBrowser
                     FormBrowser.AadClientId,
                     FormBrowser.AadReturnUrl);
                 this.oneDriveClient = new OneDriveClient(adalAuthProvider);
+                authTask = adalAuthProvider.AuthenticateUserAsync(FormBrowser.AadTargetUrl);
+            }
 
-                try
+            try
+            {
+                await authTask;
+            }
+            catch (ServiceException exception)
+            {
+                if (OAuthConstants.ErrorCodes.AuthenticationFailure == exception.Error.Code)
                 {
-                    await adalAuthProvider.AuthenticateUserAsync(FormBrowser.AadTargetUrl);
+                    MessageBox.Show(
+                        "Authentication failed",
+                        "Authentication failed",
+                        MessageBoxButtons.OK);
+
+                    this.oneDriveClient = null;
                 }
-                catch (ServiceException exception)
+                else
                 {
-                    if (OAuthConstants.ErrorCodes.AuthenticationFailure == exception.Error.Code)
-                    {
-                        MessageBox.Show(
-                            "Authentication failed",
-                            "Authentication failed",
-                            MessageBoxButtons.OK);
-
-                        this.oneDriveClient = null;
-                    }
-                    else
-                    {
-                        PresentServiceException(exception);
-                    }
+                    PresentServiceException(exception);
                 }
             }
 
