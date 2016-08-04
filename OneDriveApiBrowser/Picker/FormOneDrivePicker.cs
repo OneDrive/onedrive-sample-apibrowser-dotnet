@@ -2,17 +2,17 @@
 //  Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
 // ------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-using Microsoft.OneDrive.Sdk.Authentication;
-
 namespace OneDriveSamples.Picker
 {
     using Microsoft.OneDrive.Sdk;
+    using Microsoft.OneDrive.Sdk.Authentication;
+    using OneDriveApiBrowser;
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+
 
     public partial class FormOneDrivePicker : Form
     {
@@ -235,7 +235,7 @@ namespace OneDriveSamples.Picker
 
             if (oneDriveClient == null)
             {
-                var authProvider = new MsaAuthenticationProvider(msa_client_id, "https://login.live.com/oauth20_desktop.srf", offers);
+                var authProvider = new MsaAuthenticationProvider(msa_client_id, FormBrowser.MsaReturnUrl, offers);
                 oneDriveClient = new OneDriveClient(authProvider);
 
                 await authProvider.AuthenticateUserAsync();

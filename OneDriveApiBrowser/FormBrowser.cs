@@ -2,10 +2,9 @@
 //  Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
 // ------------------------------------------------------------------------------
 
-using Microsoft.Graph;
-
 namespace OneDriveApiBrowser
 {
+    using Microsoft.Graph;
     using Microsoft.OneDrive.Sdk;
     using Microsoft.OneDrive.Sdk.Authentication;
     using System;
@@ -16,11 +15,11 @@ namespace OneDriveApiBrowser
     public partial class FormBrowser : Form
     {
         private const string AadClientId = "Insert your AAD client ID here";
-        private const string AadReturnUrl = "Insert your AAD return URL here";
-        private const string AadTargetUrl = "Insert your AAD target URL here";
-
         private const string MsaClientId = "Insert your MSA client ID here";
-        private const string MsaReturnUrl = "https://login.live.com/oauth20_desktop.srf";
+
+        public const string AadReturnUrl = "Insert your AAD return URL here";
+        public const string AadTargetUrl = "Insert your AAD target URL here";
+        public const string MsaReturnUrl = "https://login.live.com/oauth20_desktop.srf";
 
         private static readonly string[] Scopes = { "onedrive.readwrite", "wl.signin" };
 
@@ -287,7 +286,7 @@ namespace OneDriveApiBrowser
                     FormBrowser.MsaClientId,
                     FormBrowser.MsaReturnUrl,
                     FormBrowser.Scopes);
-                this.oneDriveClient = new OneDriveClient(msaAuthProvider);
+                this.oneDriveClient = new OneDriveClient("https://api.onedrive.com/v1.0", msaAuthProvider);
 
                 try
                 {
@@ -306,7 +305,7 @@ namespace OneDriveApiBrowser
                     }
                     else
                     {
-                        throw;
+                        PresentServiceException(exception);
                     }
                 }
             }
@@ -334,7 +333,7 @@ namespace OneDriveApiBrowser
                     }
                     else
                     {
-                        throw;
+                        PresentServiceException(exception);
                     }
                 }
             }
@@ -343,9 +342,9 @@ namespace OneDriveApiBrowser
 
             try
             {
-                await this.LoadFolderFromPath();
+                await LoadFolderFromPath();
 
-                this.UpdateConnectedStateUx(true);
+                UpdateConnectedStateUx(true);
             }
             catch (ServiceException exception)
             {
@@ -361,7 +360,7 @@ namespace OneDriveApiBrowser
                 this.oneDriveClient = null;
             }
 
-            this.UpdateConnectedStateUx(false);
+            UpdateConnectedStateUx(false);
         }
 
         private System.IO.Stream GetFileStreamForUpload(string targetFolderName, out string originalFilename)
