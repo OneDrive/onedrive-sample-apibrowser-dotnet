@@ -4,12 +4,13 @@
 
 namespace OneDriveApiBrowser
 {
+    using Microsoft.Graph;
+    using Microsoft.OneDrive.Sdk;
     using System;
     using System.Drawing;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using Microsoft.OneDrive.Sdk;
 
     public partial class OneDriveTile : UserControl
     {
@@ -104,7 +105,7 @@ namespace OneDriveApiBrowser
                     // Try to load the thumbnail from the service if we haven't loaded thumbnails.
                     return await this.oneDriveClient.Drive.Items[this._sourceItem.Id].Thumbnails["0"][size].Request().GetAsync();
                 }
-                catch (OneDriveException exception)
+                catch (ServiceException exception)
                 {
                     if (exception.IsMatch(OneDriveErrorCode.ItemNotFound.ToString()))
                     {
