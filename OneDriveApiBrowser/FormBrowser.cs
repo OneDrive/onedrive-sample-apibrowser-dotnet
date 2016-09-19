@@ -286,17 +286,19 @@ namespace OneDriveApiBrowser
             {
                 var msaAuthProvider = new MsaAuthenticationProvider(
                     FormBrowser.MsaClientId,
+                    null,
                     FormBrowser.MsaReturnUrl,
-                    FormBrowser.Scopes);
+                    FormBrowser.Scopes,
+                    null);
                 this.oneDriveClient = new OneDriveClient("https://api.onedrive.com/v1.0", msaAuthProvider);
-                authTask = msaAuthProvider.AuthenticateUserAsync(new HttpProvider());
+                authTask = msaAuthProvider.AuthenticateUserAsync();
             }
             else
             {
                 var adalAuthProvider = new AdalAuthenticationProvider(
                     FormBrowser.AadClientId,
                     FormBrowser.AadReturnUrl);
-                this.oneDriveClient = new OneDriveClient(adalAuthProvider);
+                this.oneDriveClient = new OneDriveClient(FormBrowser.AadTargetUrl + "/_api/v2.0", adalAuthProvider);
                 authTask = adalAuthProvider.AuthenticateUserAsync(FormBrowser.AadTargetUrl);
             }
 
