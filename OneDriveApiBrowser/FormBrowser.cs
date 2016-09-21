@@ -289,9 +289,10 @@ namespace OneDriveApiBrowser
                     null,
                     FormBrowser.MsaReturnUrl,
                     FormBrowser.Scopes,
-                    null);
+                    null,
+                    new CredentialVault(FormBrowser.MsaClientId));
                 this.oneDriveClient = new OneDriveClient("https://api.onedrive.com/v1.0", msaAuthProvider);
-                authTask = msaAuthProvider.AuthenticateUserAsync();
+                authTask = msaAuthProvider.RestoreMostRecentFromCacheOrAuthenticateUserAsync();
             }
             else
             {
