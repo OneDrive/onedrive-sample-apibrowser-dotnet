@@ -236,7 +236,9 @@ namespace OneDriveSamples.Picker
             }
 
             var parts = this.SelectionId.Split('.');
-            var bundleID = parts[1];
+            var indexOfAuthKey = parts[1].LastIndexOf('!');
+            var bundleID = parts[1].Substring(0, indexOfAuthKey);
+
             return
                 await
                     graphClient.Drive.Items[bundleID].Request().Expand("thumbnails,children($expand=thumbnails)").GetAsync();
