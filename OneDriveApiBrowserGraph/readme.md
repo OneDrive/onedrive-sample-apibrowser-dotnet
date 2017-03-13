@@ -114,25 +114,25 @@ This sample makes use of Microsoft Graph's ability to upload items by path or by
 Here, you upload an item by path:
 
 ```csharp
-                    // Since the ItemWithPath method is available only at Drive.Root, we need to strip
-                    // /drive/root: (12 characters) from the parent path string.
-                    string folderPath = targetFolder.ParentReference == null
-                        ? ""
-                        : targetFolder.ParentReference.Path.Remove(0, 12) + "/" + Uri.EscapeUriString(targetFolder.Name);
-                    var uploadPath = folderPath + "/" + Uri.EscapeUriString(System.IO.Path.GetFileName(filename)); 
+// Since the ItemWithPath method is available only at Drive.Root, we need to strip
+// /drive/root: (12 characters) from the parent path string.
+string folderPath = targetFolder.ParentReference == null
+	? ""
+	: targetFolder.ParentReference.Path.Remove(0, 12) + "/" + Uri.EscapeUriString(targetFolder.Name);
+	var uploadPath = folderPath + "/" + Uri.EscapeUriString(System.IO.Path.GetFileName(filename)); 
 
-					// Use the Microsoft Graph SDK to upload the item by path.
-                        var uploadedItem =
-                            await
-                                this.graphClient.Drive.Root.ItemWithPath(uploadPath).Content.Request().PutAsync<DriveItem>(stream); 
+// Use the Microsoft Graph SDK to upload the item by path.
+var uploadedItem =
+	await
+	this.graphClient.Drive.Root.ItemWithPath(uploadPath).Content.Request().PutAsync<DriveItem>(stream); 
 
 ```
 
 This example shows how to upload an item by id:
 ```csharp
-                        var uploadedItem =
-                            await
-                                this.graphClient.Drive.Items[targetFolder.Id].ItemWithPath(filename).Content.Request()
+var uploadedItem =
+	await
+	this.graphClient.Drive.Items[targetFolder.Id].ItemWithPath(filename).Content.Request()
                                     .PutAsync<DriveItem>(stream); 
 ```
 
