@@ -280,22 +280,6 @@
             this.saveSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.saveSelectedFileToolStripMenuItem_Click);
 
             // 
-            // pickerToolStripMenuItem
-            // 
-            this.pickerToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openFromOneDriveToolStripMenuItem});
-            this.pickerToolStripMenuItem.Name = "pickerToolStripMenuItem";
-            this.pickerToolStripMenuItem.Size = new System.Drawing.Size(60, 24);
-            this.pickerToolStripMenuItem.Text = "Picker";
-            // 
-            // openFromOneDriveToolStripMenuItem
-            // 
-            this.openFromOneDriveToolStripMenuItem.Name = "openFromOneDriveToolStripMenuItem";
-            this.openFromOneDriveToolStripMenuItem.Size = new System.Drawing.Size(225, 24);
-            this.openFromOneDriveToolStripMenuItem.Text = "Open from OneDrive...";
-            this.openFromOneDriveToolStripMenuItem.Click += new System.EventHandler(this.openFromOneDriveToolStripMenuItem_Click);
-
-            // 
             // FormBrowser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);

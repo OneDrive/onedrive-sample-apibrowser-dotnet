@@ -481,24 +481,6 @@ namespace OneDriveApiBrowser
 
         }
 
-        private async void openFromOneDriveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var cleanAppId = "0000000040131ABA";
-            var result = await OneDriveSamples.Picker.FormOneDrivePicker.OpenFileAsync(cleanAppId, true, this);
-
-            try
-            {
-                var pickedFilesContainer = await result.GetItemsFromSelectionAsync(this.graphClient);
-
-                ProcessFolder(pickedFilesContainer);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-
-        }
-
         private async void saveSelectedFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var item = this.SelectedItem;
