@@ -3,7 +3,6 @@
 // ------------------------------------------------------------------------------
 
 using Microsoft.Graph;
-using Microsoft.OneDrive.Sdk;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +18,7 @@ namespace OneDriveApiBrowser
 
     public partial class OneDriveObjectBrowser : UserControl
     {
-        private Item _item;
+        private DriveItem _item;
         private PropertyDisplayFormat _format;
         private readonly Serializer serializer;
 
@@ -32,7 +31,7 @@ namespace OneDriveApiBrowser
             PropertyDisplayFormatChanged();
         }
 
-        public Item SelectedItem
+        public DriveItem SelectedItem
         {
             get
             {
@@ -95,7 +94,7 @@ namespace OneDriveApiBrowser
             BuildPropertyUI(this.SelectedItem);
         }
 
-        private void BuildPropertyUI(Item item)
+        private void BuildPropertyUI(DriveItem item)
         {
             if (null == item) return;
 

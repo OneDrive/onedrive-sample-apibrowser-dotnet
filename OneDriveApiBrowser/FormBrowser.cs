@@ -5,8 +5,6 @@
 namespace OneDriveApiBrowser
 {
     using Microsoft.Graph;
-    using Microsoft.OneDrive.Sdk;
-    using Microsoft.OneDrive.Sdk.Authentication;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -14,14 +12,9 @@ namespace OneDriveApiBrowser
 
     public partial class FormBrowser : Form
     {
-        private const string AadClientId = "Insert your AAD client ID here";
-        private const string MsaClientId = "Insert your MSA client ID here";
+        public const string MsaClientId = "Insert your client ID here";
+        public const string MsaReturnUrl = "urn:ietf:wg:oauth:2.0:oob";
 
-        public const string AadReturnUrl = "Insert your AAD return URL here";
-        public const string AadTargetUrl = "Insert your AAD target URL here";
-        public const string MsaReturnUrl = "https://login.live.com/oauth20_desktop.srf";
-
-        private static readonly string[] Scopes = { "onedrive.readwrite", "wl.signin" };
 
         private enum ClientType
         {
@@ -30,10 +23,11 @@ namespace OneDriveApiBrowser
         }
 
         private const int UploadChunkSize = 10 * 1024 * 1024;       // 10 MB
-        private IOneDriveClient oneDriveClient { get; set; }
+        //private IOneDriveClient oneDriveClient { get; set; }
+        private GraphServiceClient graphClient { get; set; }
         private ClientType clientType { get; set; }
-        private Item CurrentFolder { get; set; }
-        private Item SelectedItem { get; set; }
+        private DriveItem CurrentFolder { get; set; }
+        private DriveItem SelectedItem { get; set; }
 
         private OneDriveTile _selectedTile;
 
@@ -51,20 +45,20 @@ namespace OneDriveApiBrowser
 
         private async Task LoadFolderFromId(string id)
         {
-            if (null == this.oneDriveClient) return;
+            if (null == this.graphClient) return;
 
             // Update the UI for loading something new
             ShowWork(true);
-            LoadChildren(new Item[0]);
+            LoadChildren(new DriveItem[0]);
 
             try
             {
                 var expandString = this.clientType == ClientType.Consumer
-                    ? "thumbnails,children(expand=thumbnails)"
+                    ? "thumbnails,children($expand=thumbnails)"
                     : "thumbnails,children";
 
                 var folder =
-                    await this.oneDriveClient.Drive.Items[id].Request().Expand(expandString).GetAsync();
+                    await this.graphClient.Drive.Items[id].Request().Expand(expandString).GetAsync();
 
                 ProcessFolder(folder);
             }
@@ -78,29 +72,29 @@ namespace OneDriveApiBrowser
 
         private async Task LoadFolderFromPath(string path = null)
         {
-            if (null == this.oneDriveClient) return;
+            if (null == this.graphClient) return;
 
             // Update the UI for loading something new
             ShowWork(true);
-            LoadChildren(new Item[0]);
+            LoadChildren(new DriveItem[0]);
 
             try
             {
-                Item folder;
+                DriveItem folder;
 
                 var expandValue = this.clientType == ClientType.Consumer
-                    ? "thumbnails,children(expand=thumbnails)"
+                    ? "thumbnails,children($expand=thumbnails)"
                     : "thumbnails,children";
 
                 if (path == null)
                 {
-                    folder = await this.oneDriveClient.Drive.Root.Request().Expand(expandValue).GetAsync();
+                    folder = await this.graphClient.Drive.Root.Request().Expand(expandValue).GetAsync();
                 }
                 else
                 {
                     folder =
                         await
-                            this.oneDriveClient.Drive.Root.ItemWithPath("/" + path)
+                            this.graphClient.Drive.Root.ItemWithPath("/" + path)
                                 .Request()
                                 .Expand(expandValue)
                                 .GetAsync();
@@ -116,7 +110,7 @@ namespace OneDriveApiBrowser
             ShowWork(false);
         }
 
-        private void ProcessFolder(Item folder)
+        private void ProcessFolder(DriveItem folder)
         {
             if (folder != null)
             {
@@ -131,13 +125,13 @@ namespace OneDriveApiBrowser
             }
         }
 
-        private void LoadProperties(Item item)
+        private void LoadProperties(DriveItem item)
         {
             this.SelectedItem = item;
             objectBrowser.SelectedItem = item;
         }
 
-        private void LoadChildren(IList<Item> items)
+        private void LoadChildren(IList<DriveItem> items)
         {
             flowLayoutContents.SuspendLayout();
             flowLayoutContents.Controls.Clear();
@@ -151,19 +145,19 @@ namespace OneDriveApiBrowser
             flowLayoutContents.ResumeLayout();
         }
 
-        private void AddItemToFolderContents(Item obj)
+        private void AddItemToFolderContents(DriveItem obj)
         {
             flowLayoutContents.Controls.Add(CreateControlForChildObject(obj));
         }
 
-        private void RemoveItemFromFolderContents(Item itemToDelete)
+        private void RemoveItemFromFolderContents(DriveItem itemToDelete)
         {
             flowLayoutContents.Controls.RemoveByKey(itemToDelete.Id);
         }
 
-        private Control CreateControlForChildObject(Item item)
+        private Control CreateControlForChildObject(DriveItem item)
         {
-            OneDriveTile tile = new OneDriveTile(this.oneDriveClient);
+            OneDriveTile tile = new OneDriveTile(this.graphClient);
             tile.SourceItem = item;
             tile.Click += ChildObject_Click;
             tile.DoubleClick += ChildObject_DoubleClick;
@@ -196,7 +190,7 @@ namespace OneDriveApiBrowser
             
         }
 
-        private void NavigateToFolder(Item folder)
+        private void NavigateToFolder(DriveItem folder)
         {
             Task t = LoadFolderFromId(folder.Id);
 
@@ -231,7 +225,7 @@ namespace OneDriveApiBrowser
 
             RemoveDeeperBreadcrumbs(link);
 
-            Item item = link.Tag as Item;
+            DriveItem item = link.Tag as DriveItem;
             if (null == item)
             {
 
@@ -261,70 +255,30 @@ namespace OneDriveApiBrowser
 
         private void UpdateConnectedStateUx(bool connected)
         {
-            signInAadToolStripMenuItem.Visible = !connected;
             signInMsaToolStripMenuItem.Visible = !connected;
             signOutToolStripMenuItem.Visible = connected;
             flowLayoutPanelBreadcrumb.Visible = connected;
             flowLayoutContents.Visible = connected;
         }
 
-        private async void signInAadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            await this.SignIn(ClientType.Business);
-        }
-
         private async void signInMsaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            await this.SignIn(ClientType.Consumer);
+            await this.SignIn();
         }
 
-        private async Task SignIn(ClientType clientType)
+        private async Task SignIn()
         {
-            Task authTask;
-
-            if (clientType == ClientType.Consumer)
-            {
-                var msaAuthProvider = new MsaAuthenticationProvider(
-                    FormBrowser.MsaClientId,
-                    null,
-                    FormBrowser.MsaReturnUrl,
-                    FormBrowser.Scopes,
-                    null,
-                    new CredentialVault(FormBrowser.MsaClientId));
-                this.oneDriveClient = new OneDriveClient("https://api.onedrive.com/v1.0", msaAuthProvider);
-                authTask = msaAuthProvider.RestoreMostRecentFromCacheOrAuthenticateUserAsync();
-            }
-            else
-            {
-                var adalAuthProvider = new AdalAuthenticationProvider(
-                    FormBrowser.AadClientId,
-                    FormBrowser.AadReturnUrl);
-                this.oneDriveClient = new OneDriveClient(FormBrowser.AadTargetUrl + "/_api/v2.0", adalAuthProvider);
-                authTask = adalAuthProvider.AuthenticateUserAsync(FormBrowser.AadTargetUrl);
-            }
 
             try
             {
-                await authTask;
+                this.graphClient = AuthenticationHelper.GetAuthenticatedClient();
             }
             catch (ServiceException exception)
             {
-                if (OAuthConstants.ErrorCodes.AuthenticationFailure == exception.Error.Code)
-                {
-                    MessageBox.Show(
-                        "Authentication failed",
-                        "Authentication failed",
-                        MessageBoxButtons.OK);
 
-                    this.oneDriveClient = null;
-                }
-                else
-                {
-                    PresentServiceException(exception);
-                }
+             PresentServiceException(exception);
+
             }
-
-            this.clientType = clientType;
 
             try
             {
@@ -335,15 +289,15 @@ namespace OneDriveApiBrowser
             catch (ServiceException exception)
             {
                 PresentServiceException(exception);
-                this.oneDriveClient = null;
+                this.graphClient = null;
             }
         }
 
         private void signOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.oneDriveClient != null)
+            if (this.graphClient != null)
             {
-                this.oneDriveClient = null;
+                AuthenticationHelper.SignOut();
             }
 
             UpdateConnectedStateUx(false);
@@ -384,16 +338,18 @@ namespace OneDriveApiBrowser
             {
                 if (stream != null)
                 {
+                    // Since the ItemWithPath method is available only at Drive.Root, we need to strip
+                    // /drive/root: (12 characters) from the parent path string.
                     string folderPath = targetFolder.ParentReference == null
-                        ? "/drive/items/root:"
-                        : targetFolder.ParentReference.Path + "/" + Uri.EscapeUriString(targetFolder.Name);
+                        ? ""
+                        : targetFolder.ParentReference.Path.Remove(0, 12) + "/" + Uri.EscapeUriString(targetFolder.Name);
                     var uploadPath = folderPath + "/" + Uri.EscapeUriString(System.IO.Path.GetFileName(filename));
 
                     try
                     {
                         var uploadedItem =
                             await
-                                this.oneDriveClient.ItemWithPath(uploadPath).Content.Request().PutAsync<Item>(stream);
+                                this.graphClient.Drive.Root.ItemWithPath(uploadPath).Content.Request().PutAsync<DriveItem>(stream);
 
                         AddItemToFolderContents(uploadedItem);
 
@@ -420,8 +376,8 @@ namespace OneDriveApiBrowser
                     {
                         var uploadedItem =
                             await
-                                this.oneDriveClient.Drive.Items[targetFolder.Id].ItemWithPath(filename).Content.Request()
-                                    .PutAsync<Item>(stream);
+                                this.graphClient.Drive.Items[targetFolder.Id].ItemWithPath(filename).Content.Request()
+                                    .PutAsync<DriveItem>(stream);
 
                         AddItemToFolderContents(uploadedItem);
 
@@ -443,9 +399,9 @@ namespace OneDriveApiBrowser
             {
                 try
                 {
-                    var folderToCreate = new Item { Name = dialog.InputText, Folder = new Folder() };
+                    var folderToCreate = new DriveItem { Name = dialog.InputText, Folder = new Folder() };
                     var newFolder =
-                        await this.oneDriveClient.Drive.Items[this.SelectedItem.Id].Children.Request()
+                        await this.graphClient.Drive.Items[this.SelectedItem.Id].Children.Request()
                             .AddAsync(folderToCreate);
 
                     if (newFolder != null)
@@ -456,20 +412,8 @@ namespace OneDriveApiBrowser
                 }
                 catch(ServiceException exception)
                 {
-                    if (exception.IsMatch(OneDriveErrorCode.InvalidRequest.ToString()))
-                    {
-                        MessageBox.Show(
-                            "Please enter a valid folder name.",
-                            "Invalid folder name",
-                            MessageBoxButtons.OK);
+                    PresentServiceException(exception);
 
-                        dialog.Dispose();
-                        this.createFolderToolStripMenuItem_Click(sender, e);
-                    }
-                    else
-                    {
-                        PresentServiceException(exception);
-                    }
                 }
                 catch (Exception exception)
                 {
@@ -502,7 +446,7 @@ namespace OneDriveApiBrowser
             {
                 try
                 {
-                    await this.oneDriveClient.Drive.Items[itemToDelete.Id].Request().DeleteAsync();
+                    await this.graphClient.Drive.Items[itemToDelete.Id].Request().DeleteAsync();
                     
                     RemoveItemFromFolderContents(itemToDelete);
                     MessageBox.Show("Item was deleted successfully");
@@ -519,9 +463,12 @@ namespace OneDriveApiBrowser
             try
             {
                 var result =
-                    await this.oneDriveClient.Drive.Items[this.CurrentFolder.Id].Delta(null).Request().GetAsync();
+                    await this.graphClient.Drive.Items[this.CurrentFolder.Id].Delta().Request().GetAsync();
 
-                Console.WriteLine(result);
+                foreach ( DriveItem item in result)
+                {
+                    Console.WriteLine(item.Name);
+                }
             }
             catch (Exception ex)
             {
@@ -532,40 +479,6 @@ namespace OneDriveApiBrowser
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
-        }
-
-        private async void openFromOneDriveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var cleanAppId = "0000000040131ABA";
-            var result = await OneDriveSamples.Picker.FormOneDrivePicker.OpenFileAsync(cleanAppId, true, this);
-
-            try
-            {
-                var pickedFilesContainer = await result.GetItemsFromSelectionAsync(this.oneDriveClient);
-
-                ProcessFolder(pickedFilesContainer);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-
-            //// Do something with the picker result we got
-            //var pickedFiles = await result.GetSelectionResponseAsync();
-            //if (pickedFiles == null)
-            //{
-            //    MessageBox.Show("Error picking files.");
-            //    return;
-            //}
-
-            //StringBuilder builder = new StringBuilder();
-            //builder.AppendFormat("You selected {0} files\n", pickedFiles.Length);
-            //foreach (var file in pickedFiles)
-            //{
-            //    builder.AppendLine(file.name);
-            //}
-
-            //MessageBox.Show(builder.ToString());
         }
 
         private async void saveSelectedFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -584,7 +497,7 @@ namespace OneDriveApiBrowser
             if (result != System.Windows.Forms.DialogResult.OK)
                 return;
 
-            using (var stream = await this.oneDriveClient.Drive.Items[item.Id].Content.Request().GetAsync())
+            using (var stream = await this.graphClient.Drive.Items[item.Id].Content.Request().GetAsync())
             using (var outputStream = new System.IO.FileStream(dialog.FileName, System.IO.FileMode.Create))
             {
                 await stream.CopyToAsync(outputStream);

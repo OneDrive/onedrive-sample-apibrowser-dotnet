@@ -5,7 +5,6 @@
 namespace OneDriveApiBrowser
 {
     using Microsoft.Graph;
-    using Microsoft.OneDrive.Sdk;
     using System;
     using System.Drawing;
     using System.Linq;
@@ -14,17 +13,17 @@ namespace OneDriveApiBrowser
 
     public partial class OneDriveTile : UserControl
     {
-        private Item _sourceItem;
+        private DriveItem _sourceItem;
         private bool _selected;
-        private IOneDriveClient oneDriveClient;
+        private GraphServiceClient graphClient;
 
-        public OneDriveTile(IOneDriveClient oneDriveClient)
+        public OneDriveTile(GraphServiceClient graphClient)
         {
-            this.oneDriveClient = oneDriveClient;
+            this.graphClient = graphClient;
             InitializeComponent();
         }
 
-        public Item SourceItem 
+        public DriveItem SourceItem 
         {
             get { return _sourceItem; }
             set
@@ -61,7 +60,7 @@ namespace OneDriveApiBrowser
         /// </summary>
         /// <param name="size"></param>
         /// <returns></returns>
-        public async Task<Thumbnail> ThumbnailUrlAsync(string size = "large")
+        public async Task<Microsoft.Graph.Thumbnail> ThumbnailUrlAsync(string size = "large")
         {
             bool loadedThumbnails = this._sourceItem != null && this._sourceItem.Thumbnails != null &&
                                     this._sourceItem.Thumbnails.CurrentPage != null;
@@ -103,15 +102,13 @@ namespace OneDriveApiBrowser
                 try
                 {
                     // Try to load the thumbnail from the service if we haven't loaded thumbnails.
-                    return await this.oneDriveClient.Drive.Items[this._sourceItem.Id].Thumbnails["0"][size].Request().GetAsync();
+                    return await this.graphClient.Drive.Items[this._sourceItem.Id].Thumbnails["0"][size].Request().GetAsync();
                 }
-                catch (ServiceException exception)
+                catch (ServiceException)
                 {
-                    if (exception.IsMatch(OneDriveErrorCode.ItemNotFound.ToString()))
-                    {
-                        // Just swallow not found. We don't want an error popup and we just won't render a thumbnail
-                        return null;
-                    }
+
+                    // Just swallow not found. We don't want an error popup and we just won't render a thumbnail
+                    return null;
                 }
             }
 
