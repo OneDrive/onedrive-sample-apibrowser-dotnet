@@ -80,19 +80,19 @@
             this.copyValueToolStripMenuItem,
             this.copyRowToolStripMenuItem});
             this.contextMenuStripProperty.Name = "contextMenuStripProperty";
-            this.contextMenuStripProperty.Size = new System.Drawing.Size(154, 52);
+            this.contextMenuStripProperty.Size = new System.Drawing.Size(134, 48);
             // 
             // copyValueToolStripMenuItem
             // 
             this.copyValueToolStripMenuItem.Name = "copyValueToolStripMenuItem";
-            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(153, 24);
+            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.copyValueToolStripMenuItem.Text = "Copy Value";
             this.copyValueToolStripMenuItem.Click += new System.EventHandler(this.copyValueToolStripMenuItem_Click);
             // 
             // copyRowToolStripMenuItem
             // 
             this.copyRowToolStripMenuItem.Name = "copyRowToolStripMenuItem";
-            this.copyRowToolStripMenuItem.Size = new System.Drawing.Size(153, 24);
+            this.copyRowToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.copyRowToolStripMenuItem.Text = "Copy Row";
             this.copyRowToolStripMenuItem.Click += new System.EventHandler(this.copyRowToolStripMenuItem_Click);
             // 
@@ -130,7 +130,7 @@
             this.labelSelectedItemProperties.Location = new System.Drawing.Point(0, 0);
             this.labelSelectedItemProperties.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelSelectedItemProperties.Name = "labelSelectedItemProperties";
-            this.labelSelectedItemProperties.Size = new System.Drawing.Size(144, 15);
+            this.labelSelectedItemProperties.Size = new System.Drawing.Size(125, 13);
             this.labelSelectedItemProperties.TabIndex = 4;
             this.labelSelectedItemProperties.Text = "Selected Item Properties:";
             // 

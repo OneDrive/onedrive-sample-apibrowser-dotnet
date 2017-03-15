@@ -162,7 +162,6 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.signInAadToolStripMenuItem,
             this.signInMsaToolStripMenuItem,
             this.signOutToolStripMenuItem,
             this.toolStripMenuItem3,
@@ -174,18 +173,11 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.fileToolStripMenuItem.Text = "&File";
             // 
-            // signInAadToolStripMenuItem
-            // 
-            this.signInAadToolStripMenuItem.Name = "signInAadToolStripMenuItem";
-            this.signInAadToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
-            this.signInAadToolStripMenuItem.Text = "Sign In to AAD...";
-            this.signInAadToolStripMenuItem.Click += new System.EventHandler(this.signInAadToolStripMenuItem_Click);
-            // 
             // signInMsaToolStripMenuItem
             // 
             this.signInMsaToolStripMenuItem.Name = "signInMsaToolStripMenuItem";
             this.signInMsaToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
-            this.signInMsaToolStripMenuItem.Text = "Sign In to MSA...";
+            this.signInMsaToolStripMenuItem.Text = "Sign In...";
             this.signInMsaToolStripMenuItem.Click += new System.EventHandler(this.signInMsaToolStripMenuItem_Click);
             // 
             // signOutToolStripMenuItem
@@ -287,28 +279,6 @@
             this.saveSelectedFileToolStripMenuItem.Text = "Save Selected File...";
             this.saveSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.saveSelectedFileToolStripMenuItem_Click);
 
-            // 
-            // pickerToolStripMenuItem
-            // 
-            this.pickerToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openFromOneDriveToolStripMenuItem,
-            this.uploadToOneDriveToolStripMenuItem});
-            this.pickerToolStripMenuItem.Name = "pickerToolStripMenuItem";
-            this.pickerToolStripMenuItem.Size = new System.Drawing.Size(60, 24);
-            this.pickerToolStripMenuItem.Text = "Picker";
-            // 
-            // openFromOneDriveToolStripMenuItem
-            // 
-            this.openFromOneDriveToolStripMenuItem.Name = "openFromOneDriveToolStripMenuItem";
-            this.openFromOneDriveToolStripMenuItem.Size = new System.Drawing.Size(225, 24);
-            this.openFromOneDriveToolStripMenuItem.Text = "Open from OneDrive...";
-            this.openFromOneDriveToolStripMenuItem.Click += new System.EventHandler(this.openFromOneDriveToolStripMenuItem_Click);
-            // 
-            // uploadToOneDriveToolStripMenuItem
-            // 
-            this.uploadToOneDriveToolStripMenuItem.Name = "uploadToOneDriveToolStripMenuItem";
-            this.uploadToOneDriveToolStripMenuItem.Size = new System.Drawing.Size(225, 24);
-            this.uploadToOneDriveToolStripMenuItem.Text = "Upload to OneDrive...";
             // 
             // FormBrowser
             // 
