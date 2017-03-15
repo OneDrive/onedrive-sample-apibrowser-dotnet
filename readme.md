@@ -2,7 +2,7 @@
 
 The OneDriveAPIBrowser sample is a [Windows Forms](https://msdn.microsoft.com/en-us/library/dd30h2yb(v=vs.110).aspx) app sample that uses the [Microsoft Graph .NET Client Library](https://github.com/microsoftgraph/msgraph-sdk-dotnet) for C#/.NET. In this sample, users can browse files and folders that are stored on OneDrive, and view metadata.
 
-##Register and configure the application
+## Register and configure the application
 
 1. Sign into the [App Registration Portal](https://apps.dev.microsoft.com/) using either your personal or work or school account.  
 2. Select **Add an app**.  
@@ -18,7 +18,7 @@ The OneDriveAPIBrowser sample is a [Windows Forms](https://msdn.microsoft.com/en
 2. Download the OneDriveAPIBrowser sample from [GitHub](https://github.com/OneDrive/onedrive-sample-apibrowser-dotnet) or create your own fork of the repository.
 3. From Visual Studio, open the **OneDriveApiBrowser.sln** solution.
 4. Go to the OneDriveApiBrowser project in the solution and view the code for FormBrowser.cs.
-5. Configure the sample to use the Client Id that you registered by making it the value of the `MsaClientId` variable:
+5. Configure the sample to use the Client Id (App Id) that you registered by making it the value of the `MsaClientId` variable:
 ```csharp
         private const string MsaClientId = "Insert your client ID here";
 ```
