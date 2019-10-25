@@ -1,3 +1,18 @@
+---
+page_type: sample
+products:
+- office-onedrive
+- ms-graph
+languages:
+- csharp
+extensions:
+  contentType: samples
+  technologies:
+  - Microsoft Graph
+  services:
+  - OneDrive
+  createdDate: 7/6/2016 11:47:49 AM
+---
 # OneDrive API Browser Sample
 
 The OneDriveAPIBrowser sample is a [Windows Forms](https://msdn.microsoft.com/en-us/library/dd30h2yb(v=vs.110).aspx) app sample that uses the [Microsoft Graph .NET Client Library](https://github.com/microsoftgraph/msgraph-sdk-dotnet) for C#/.NET. In this sample, users can browse files and folders that are stored on OneDrive, and view metadata.
