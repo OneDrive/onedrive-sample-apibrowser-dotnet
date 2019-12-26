@@ -31,7 +31,7 @@ namespace OneDriveApiBrowser
                 try
                 {
                     graphClient = new GraphServiceClient(
-                        "https://graph.microsoft.com/v1.0",
+                        "https://graph.microsoft.com/v1.0/me",
                         new DelegateAuthenticationProvider(
                             async (requestMessage) =>
                             {

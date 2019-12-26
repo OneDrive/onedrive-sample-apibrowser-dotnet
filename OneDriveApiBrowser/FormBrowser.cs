@@ -12,8 +12,8 @@ namespace OneDriveApiBrowser
 
     public partial class FormBrowser : Form
     {
-        public const string MsaClientId = "Insert your client ID here";
-        public const string MsaReturnUrl = "urn:ietf:wg:oauth:2.0:oob";
+        public const string MsaClientId = "";
+        public const string MsaReturnUrl = "";
 
 
         private enum ClientType
